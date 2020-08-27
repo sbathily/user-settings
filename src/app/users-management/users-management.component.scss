@@ -1,0 +1,67 @@
+
+
+.box{
+    //display: flex;
+    //width: 700px;
+    height: 450px;
+    align-items: stretch;
+    justify-content: center;
+}
+
+#userIdEntry #updateButton{
+  margin: 10px;
+}
+
+#userSection .btn{
+    margin: 10px;
+}
+
+#roleSection .input-group{
+    margin: 10px;
+}
+
+#entitySection .custom-select{
+    width: 200px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.list-group-item{
+    height: 40px;
+}
+
+.btn-group-vertical{
+    margin: 100px;
+    align-content: center;
+    justify-content: center;
+}
+
+#entitiesAssignmentButton{
+    position: relative;
+    width: 200px;
+    height: 400px;
+}
+
+#addEntityButton{
+    position: absolute;
+    top: 60px;
+    height: 100px;
+    width: 100px;
+    margin: 50px;
+}
+
+#removeEntityButton{
+    position: absolute;
+    bottom: 30px;
+    height: 100px;
+    width: 100px;
+    margin: 50px;
+}
+
+#userButton{
+    top: 0;
+    margin: 10px;
+    height: 40px;
+    width: 100px;
+}
+

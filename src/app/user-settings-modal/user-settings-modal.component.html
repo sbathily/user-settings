@@ -1,0 +1,173 @@
+<button type="button" class="btn btn-primary col-2" id="addUserButton" (click)="open(userSettingsModal)">Open User Settings Modal</button>
+
+<!--------------------------------------------------------------------------------------------------------------->
+<!--------------------------------------------------------------------------------------------------------------->
+<!-- Modal User Settings-->
+
+<ng-template #userSettingsModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">User Settings</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!--------------------------------------------------------------------------------------------------------------->
+    <div id="userSection" class="border-bottom border-secondary">
+        <div class="d-flex justify-content-around">
+          <button type="button" class="btn btn-secondary btn-sm" id="addUserButton" (click)="open(addUserModal)">Add a user</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="addUserByCloneButton" (click)="open(addUserByCloneModal)">Add a user by clone</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="delUserButton" (click)="open(removeUserModal)">Remove a user</button>    
+        </div>
+    </div>
+
+    <br>
+    <h5>Editing user profile</h5>
+    <h6 class="font-weight-light" *ngIf="tmpUserId.length !== 0">Enter the User ID</h6>
+    <div id="userIdEntry" class="input-group input-group-sm mb-3">
+      <!--input type="text" class="form-control" placeholder="Enter the User ID" aria-label="Enter the User ID" aria-describedby="basic-addon2" [(ngModel)]="tmpUserId"-->
+      <select class="custom-select" [(ngModel)]="tmpUserId">
+        <option  *ngFor="let user of usersList" [value]="user">{{ user }}</option>
+      </select>
+      <div class="input-group-append">
+        <button class="btn btn-secondary" type="button" (click)="submitEditUser(false)">Submit</button>
+      </div>
+    </div>
+    <div *ngIf="isSubmitted">
+      <br>
+      <h5>USER PROFILE : {{ currentUserId }}</h5>
+    </div>
+
+    <br>
+    <h5>Role selection</h5>
+    <div id="roleSection" class="border-bottom border-secondary">
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+              <button class="btn btn-secondary btn-sm" type="button" (click)="addRole()" [disabled]="! isSubmitted">ADD ROLE</button>
+            </div>
+            <select class="custom-select" [(ngModel)]="selectedRoles">
+              <option  *ngFor="let role of rolesList" [value]="role">{{ role }}</option>
+            </select>
+        </div>
+        <label>Effective roles : </label>
+        <br>
+        <label *ngIf="currentRolesList.length === 0 " class="font-italic">No role selected</label>
+        <ul class="list-group list-group-flush list-group-sm">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let crole of currentRolesList">
+              <label>{{ crole }}</label>
+              <span class='btn btn-transparent ml' (click)=removeRole(crole)><i class="material-icons" aria-hidden="true">clear</i></span>
+            </li>
+        </ul>
+    </div>
+
+    <br>
+    <h5>Entities selection</h5>
+    <!--div class="box col-8 border border-secondary" id="entitySection">-->
+    <div class="d-flex justify-content-center align-items-stretch" id="entitySection">
+        <div>
+            <h6 class="align-items-center offset-1 small">SELECT ENTITIES</h6>
+            <div class="d-flex flex-column">
+              <select class="custom-select" multiple [(ngModel)]="selectedClientAction" id="clientAction">
+                <option  *ngFor="let client of clientsList" [value]="client">Add all {{client}} entities</option>
+              </select>
+              <select class="custom-select" multiple [(ngModel)]="selectedEntities" id="clientLocation">
+                <option  *ngFor="let entity of entitiesList" [value]="entity">{{ entity }}</option>
+              </select>
+            </div>
+        </div>    
+        <div id="entitiesAssignmentButton" class="d-flex flex-column">
+            <button type="button" class="btn btn-secondary" id="addEntityButton" (click)="addEntity()"><i class="material-icons">arrow_forward</i></button>
+            <button type="button" class="btn btn-secondary" id="removeEntityButton" (click)="removeEntity()"><i class="material-icons">arrow_back</i></button>
+        </div>
+        <div>
+            <h6 class="align-items-center offset-1 small">EFFECTIVE ENTITIES</h6>
+            <select class="custom-select" multiple [(ngModel)]="selectedEntities" id="currentEntities">
+              <option  *ngFor="let entity of currentEntitiesList" [value]="entity">{{ entity }}</option>
+            </select>
+        </div>
+    </div>
+    <!--------------------------------------------------------------------------------------------------------------->
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">CANCEL</button>
+    <button type="button" class="btn btn-outline-dark" (click)="updateUserSetting()" [disabled]="! isSubmitted">SAVE CHANGES</button>
+  </div>
+</ng-template>
+
+<!-- Modal Add User-->
+<ng-template #addUserModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add a user</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="needs-validation" novalidate>
+      <div class="form-group">
+        <label for="inputUserID">User ID</label>
+        <input class="form-control" placeholder="Enter the user ID" id="inputUserID" [(ngModel)]="newUser" [ngModelOptions]="{standalone: true}" required>
+        <div class="valid-feedback"></div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    <button type="button" class="btn btn-outline-dark"  type="submit" (click)="submitNewUser(newUser)">Submit</button>
+  </div>
+</ng-template>
+
+<!-- Modal Add User By CLone-->
+<ng-template #addUserByCloneModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add a user by clone</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+        <label for="inputUserID">User ID</label>
+        <input class="form-control" placeholder="Enter the user ID" id="inputUserID" [(ngModel)]="newUser" [ngModelOptions]="{standalone: true}">
+        <label for="inputUserID">Cloned User ID</label>
+        <input class="form-control" placeholder="Enter the user ID to clone" id="inputUserFromID" [(ngModel)]="clonedUser" [ngModelOptions]="{standalone: true}">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    <button type="button" class="btn btn-outline-dark" type="submit" (click)="submitNewUserCloned(newUser,clonedUser)">Submit</button>
+  </div>
+</ng-template>
+
+<!-- Modal Remove User-->
+<ng-template #removeUserModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Remove a user</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="usersList.length;then usersListnotEmptyTemplate else usersListEmptyTemplate"></div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    <!--button type="button" class="btn btn-outline-dark" (click)="removeUser(valUserId)" *ngIf="usersList.length">Submit</button-->
+  </div>
+</ng-template>
+
+<ng-template #usersListEmptyTemplate let-modal>
+  <label>User list empty</label>
+</ng-template>
+
+<ng-template #usersListnotEmptyTemplate let-modal>
+  <ul class="list-group list-group-flush list-group-sm">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let user of usersList">
+        <label>{{ user }}</label>
+        <span class='btn btn-transparent ml' (click)=removeUser(user)><i class="material-icons" aria-hidden="true">remove_circle_outline</i></span>
+      </li>
+  </ul>
+</ng-template>
+

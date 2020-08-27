@@ -1,0 +1,189 @@
+<div class="d-flex row">
+  <nav class="col-2">
+    <div class="nav nav-tabs flex-column" id="nav-tab" role="tablist">
+      <a class="nav-item nav-link" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
+      <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</a>
+      <a class="nav-item nav-link active" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Remove user</a>
+    </div>
+  </nav>
+  <div class="tab-content col-8" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <p>
+        <app-user-settings-modal></app-user-settings-modal>
+      </p>
+    </div>
+    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+      <p>
+        « Texte »
+      </p>
+    </div>
+    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+      <div id=removeUserModal class="card">
+        <div class="card-header">
+          <h4 class="card-title" id="modal-basic-title">Remove a user</h4>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="card-body">
+          <div *ngIf="usersList.length;then usersListnotEmptyTemplate else usersListEmptyTemplate"></div>
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+          <!--button type="button" class="btn btn-outline-dark" (click)="removeUser(valUserId)" *ngIf="usersList.length">Submit</button-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--------------------------------------------------------------------------------------------------------------->
+<!--------------------------------------------------------------------------------------------------------------->
+<!-- Modal User Settings-->
+
+<ng-template #userSettingsModal class="card">
+  <div class="card-header">
+    <h4 class="card-title" id="modal-basic-title">User Settings</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="card-body">
+    <!--------------------------------------------------------------------------------------------------------------->
+    <div id="userSection" class="border-bottom border-secondary">
+        <div class="d-flex justify-content-around">
+          <button type="button" class="btn btn-secondary btn-sm" id="addUserButton" (click)="open(addUserModal)">Add a user</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="addUserByCloneButton" (click)="open(addUserByCloneModal)">Add a user by clone</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="delUserButton" (click)="open(removeUserModal)">Remove a user</button>    
+        </div>
+    </div>
+
+    <br>
+    <h5>Editing user profile</h5>
+    <h6 class="font-weight-light" *ngIf="tmpUserId.length !== 0">Enter the User ID</h6>
+    <div id="userIdEntry" class="input-group input-group-sm mb-3">
+      <input type="text" class="form-control" placeholder="Enter the User ID" aria-label="Enter the User ID" aria-describedby="basic-addon2" [(ngModel)]="tmpUserId">
+      <div class="input-group-append">
+        <button class="btn btn-secondary" type="button" (click)="submitEditUser(false)">Submit</button>
+      </div>
+    </div>
+    <div *ngIf="isSubmitted">
+      <br>
+      <h5>USER PROFILE : {{ currentUserId }}</h5>
+    </div>
+
+    <br>
+    <h5>Role selection</h5>
+    <div id="roleSection" class="border-bottom border-secondary">
+        <div class="input-group input-group-sm mb-3">
+            <div class="input-group-prepend">
+              <button class="btn btn-secondary btn-sm" type="button" (click)="addRole()" [disabled]="! isSubmitted">ADD ROLE</button>
+            </div>
+            <select class="custom-select" [(ngModel)]="selectedRoles">
+              <option  *ngFor="let role of rolesList" [value]="role">{{ role }}</option>
+            </select>
+        </div>
+        <label>Effective roles : </label>
+        <br>
+        <label *ngIf="currentRolesList.length === 0 " class="font-italic">No role selected</label>
+        <ul class="list-group list-group-flush list-group-sm">
+            <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let crole of currentRolesList">
+              <label>{{ crole }}</label>
+              <span class='btn btn-transparent ml' (click)=removeRole(crole)><i class="material-icons" aria-hidden="true">clear</i></span>
+            </li>
+        </ul>
+    </div>
+
+    <br>
+    <h5>Entities selection</h5>
+    <!--div class="box col-8 border border-secondary" id="entitySection">-->
+    <div class="d-flex justify-content-center align-items-stretch" id="entitySection">
+        <div>
+            <h6 class="align-items-center offset-1 small">SELECT ENTITIES</h6>
+            <select class="custom-select" multiple [(ngModel)]="selectedEntities">
+              <option  *ngFor="let entity of entitiesList" [value]="entity">{{ entity }}</option>
+            </select>
+        </div>    
+        <div id="entitiesAssignmentButton" class="d-flex flex-column">
+            <button type="button" class="btn btn-secondary" id="addEntityButton" (click)="addEntity()"><i class="material-icons">arrow_forward</i></button>
+            <button type="button" class="btn btn-secondary" id="removeEntityButton" (click)="removeEntity()"><i class="material-icons">arrow_back</i></button>
+        </div>
+        <div>
+            <h6 class="align-items-center offset-1 small">EFFECTIVE ENTITIES</h6>
+            <select class="custom-select" multiple [(ngModel)]="selectedEntities">
+              <option  *ngFor="let entity of currentEntitiesList" [value]="entity">{{ entity }}</option>
+            </select>
+        </div>
+    </div>
+    <!--------------------------------------------------------------------------------------------------------------->
+  </div>
+  <div class="card-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">CANCEL</button>
+    <button type="button" class="btn btn-outline-dark" (click)="updateUserSetting()" [disabled]="! isSubmitted">SAVE CHANGES</button>
+  </div>
+</ng-template>
+
+<!-- Modal Add User-->
+<ng-template #addUserModal class="card">
+  <div class="card-header">
+    <h4 class="card-title" id="modal-basic-title">Add a user</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="card-body">
+    <form class="needs-validation" novalidate>
+      <div class="form-group">
+        <label for="inputUserID">User ID</label>
+        <input class="form-control" placeholder="Enter the user ID" id="inputUserID" [(ngModel)]="newUser" [ngModelOptions]="{standalone: true}" required>
+        <div class="valid-feedback"></div>
+      </div>
+    </form>
+  </div>
+  <div class="card-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    <button type="button" class="btn btn-outline-dark"  type="submit" (click)="submitNewUser(newUser)">Submit</button>
+  </div>
+</ng-template>
+
+<!-- Modal Add User By CLone-->
+<ng-template #addUserByCloneModal class="card">
+  <div class="card-header">
+    <h4 class="card-title" id="modal-basic-title">Add a user by clone</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="card-body">
+    <form>
+      <div class="form-group">
+        <label for="inputUserID">User ID</label>
+        <input class="form-control" placeholder="Enter the user ID" id="inputUserID" [(ngModel)]="newUser" [ngModelOptions]="{standalone: true}">
+        <label for="inputUserID">Cloned User ID</label>
+        <input class="form-control" placeholder="Enter the user ID to clone" id="inputUserFromID" [(ngModel)]="clonedUser" [ngModelOptions]="{standalone: true}">
+      </div>
+    </form>
+  </div>
+  <div class="card-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Close</button>
+    <button type="button" class="btn btn-outline-dark" type="submit" (click)="submitNewUserCloned(newUser,clonedUser)">Submit</button>
+  </div>
+</ng-template>
+
+<!-- Modal Remove User-->
+
+
+<ng-template #usersListEmptyTemplate>
+  <label>User list empty</label>
+</ng-template>
+
+<ng-template #usersListnotEmptyTemplate>
+  <ul class="list-group list-group-flush list-group-sm">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let user of usersList">
+        <label>{{ user }}</label>
+        <span class='btn btn-transparent ml' (click)=removeUser(user)><i class="material-icons" aria-hidden="true">remove_circle_outline</i></span>
+      </li>
+  </ul>
+</ng-template>
+

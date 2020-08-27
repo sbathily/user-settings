@@ -1,0 +1,75 @@
+#userIdEntry #updateButton{
+    margin: 10px;
+}
+
+#userSection .btn{
+    margin: 10px;
+    width: 80px;
+}
+
+#roleSection .input-group{
+    margin-top: 10px;
+}
+
+#entitySection{
+    height: 450px;
+}
+
+//#entitySection .custom-select{
+#currentEntities{
+    width: 150px;
+    height: 400px;
+    overflow-y: scroll;
+}
+
+#clientAction{
+    width: 150px;
+    height: 100px;
+    overflow-y: scroll;
+}
+
+#clientLocation{
+    width: 150px;
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.list-group-item{
+    height: 40px;
+}
+
+.btn-group-vertical{
+    margin: 100px;
+    align-content: center;
+    justify-content: center;
+}
+
+#entitiesAssignmentButton{
+    position: relative;
+    width: 150px;
+    height: 400px;
+}
+
+#addEntityButton{
+    position: absolute;
+    top: 60px;
+    height: 70px;
+    width: 70px;
+    margin: 40px;
+}
+
+#removeEntityButton{
+    position: absolute;
+    bottom: 30px;
+    height: 70px;
+    width: 70px;
+    margin: 40px;
+}
+
+#userButton{
+    top: 0;
+    margin: 10px;
+    height: 40px;
+    width: 100px;
+}
+
